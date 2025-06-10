@@ -2,7 +2,6 @@ from clients import PostgresClient, RedisClient
 from kafka import KafkaConsumer
 import json
 
-
 class Consumer():
     def __init__(self):
         self.consumer = self.define_consumer()
@@ -10,17 +9,19 @@ class Consumer():
         self.r = RedisClient()
 
     def define_consumer(self):
-        consumer = KafkaConsumer(
-            'iot-sensor-data',
-            api_version=(3, 8, 0), # passei uma fome por cauas dessa versao aqui
-            bootstrap_servers='kafka:9092',
-            value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-            auto_offset_reset='earliest',
-            enable_auto_commit=True,
-            group_id='iot-group'
-        )
-
-        return consumer
+        try:
+            consumer = KafkaConsumer(
+                'iot-sensor-data',
+                api_version=(3, 8, 0), # passei uma fome por cauas dessa versao aqui
+                bootstrap_servers='kafka:9092',
+                value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+                auto_offset_reset='earliest',
+                enable_auto_commit=True,
+                group_id='iot-group'
+            )
+            return consumer
+        except Exception as e:
+            print(f"Failed to define Consumer. Error:{e}")
 
     def process_message(self, msg_value):
         """
