@@ -9,7 +9,6 @@ services:
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      # - KAFKA_CFG_NUM_PARTITIONS=3
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     depends_on:
@@ -51,3 +50,27 @@ services:
       dockerfile: Dockerfile.consumer
     depends_on:
       - kafka
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+  redis:
+    container_name: redis
+    image: redis:7
+    ports:
+      - "6379:6379"
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: iotuser
+      POSTGRES_PASSWORD: iotpass
+      POSTGRES_DB: iotdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data #pedir o gpt pra explicar isso aqui depois
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql #pedir o gpt pra explicar isso aqui depois
+
+volumes:
+  pgdata:
