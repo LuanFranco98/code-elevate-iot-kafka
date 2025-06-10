@@ -1,6 +1,8 @@
 from kafka import KafkaConsumer
+import psycopg2
+import redis
 import json
-# import psycopg2
+import os
 
 # Kafka Consumer
 consumer = KafkaConsumer(
@@ -13,35 +15,36 @@ consumer = KafkaConsumer(
     group_id='iot-group'
 )
 
-# # PostgreSQL connection
-# conn = psycopg2.connect(
-#     dbname='iotdb',
-#     user='iotuser',
-#     password='iotpass',
-#     host='localhost',
-#     port='5432'
-# )
-# cursor = conn.cursor()
+# PostgreSQL connection
+conn = psycopg2.connect(
+    dbname=os.environ["POSTGRES_DB"],
+    user=os.environ["POSTGRES_USER"],
+    password=os.environ["POSTGRES_PASSWORD"],
+    host=os.environ["POSTGRES_HOST"],
+    port=5432
+)
+cursor = conn.cursor()
 
-# # Criar tabela (apenas uma vez)
-# cursor.execute("""
-# CREATE TABLE IF NOT EXISTS sensor_data (
-#     sensor_id TEXT,
-#     timestamp TIMESTAMP,
-#     temperature FLOAT,
-#     humidity FLOAT,
-#     location TEXT
-# )
-# """)
-# conn.commit()
-
+# Redis connection
+r = redis.Redis(
+    host=os.environ["REDIS_HOST"],
+    port=int(os.environ["REDIS_PORT"]),
+    db=0
+)
 
 if __name__ == '__main__':
     for msg in consumer:
         data = msg.value
-        # cursor.execute("""
-        # INSERT INTO sensor_data (sensor_id, timestamp, temperature, humidity, location)
-        # VALUES (%s, %s, %s, %s, %s)
-        # """, (data['sensor_id'], data['timestamp'], data['temperature'], data['humidity'], data['location']))
-        # conn.commit()
-        print(f"Stored: {data}")
+        print(f"Recieved: {data}")
+
+        # Save to Redis
+        r.set(f"sensor:{data['sensor_id']}", json.dumps(data))
+
+        # Save to PostgreSQL
+        cursor.execute("""
+            INSERT INTO sensor_data (sensor_id, timestamp, temperature, humidity, location)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (data["sensor_id"], data["timestamp"], data["temperature"], data["humidity"], data["location"]))
+        conn.commit()
+
+        print("Data Saved!")

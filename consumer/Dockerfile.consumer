@@ -8,7 +8,7 @@ WORKDIR /app
 COPY sensor_consumer.py .
 
 # Instalando dependências
-RUN pip install kafka-python simplejson
+RUN pip install kafka-python simplejson psycopg2 redis 
 
 # Rodando script
 CMD ["python", "sensor_consumer.py"]

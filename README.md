@@ -17,6 +17,9 @@ Você precisa criar um sistema de monitoramento de sensores IoT que envia dados 
 - Build:
     - $ docker compose up --build
 
+- deletar containers
+    - $ docker compose down 
+
 - List runing:
     - $ docker ps -a
 
@@ -28,3 +31,6 @@ Você precisa criar um sistema de monitoramento de sensores IoT que envia dados 
          - listar databases: \dt
          - table schema: \d sensor_data
          - SELECT * FROM sensor_data LIMIT 5;
+
+
+SELECT * FROM sensor_data where sensor_id='d6390e14-e96c-4201-9479-22d0d53aeedf';
