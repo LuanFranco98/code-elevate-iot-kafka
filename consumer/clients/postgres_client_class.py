@@ -25,9 +25,17 @@ class PostgresClient:
     def insert_sensor_data(self, data):
         try:
             self.cursor.execute("""
-                INSERT INTO sensor_data (sensor_id, timestamp, temperature, humidity, location)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO sensor_data (ping_id, sensor_id, timestamp, temperature, humidity, location)
+                VALUES (%s, %s, %s, %s, %s, %s) 
+                ON CONFLICT (ping_id) DO UPDATE
+                SET 
+                    sensor_id = EXCLUDED.sensor_id,
+                    timestamp = EXCLUDED.timestamp,
+                    temperature = EXCLUDED.temperature,
+                    humidity = EXCLUDED.humidity,
+                    location = EXCLUDED.location
             """, (
+                data["ping_id"],
                 data["sensor_id"],
                 data["timestamp"],
                 data["temperature"],
@@ -38,10 +46,10 @@ class PostgresClient:
             print("Saved to PostgreSQL.")
         except Exception as e:
             print(f"Error saving to PostgreSQL: {e}")
-            self.pg_conn.rollback() 
+            self.conn.rollback() 
             raise 
 
     def close(self):
-        if self.pg_cursor:
-            self.pg_cursor.close()
+        if self.conn:
+            self.conn.close()
             print("PostgreSQL cursor closed in DataSaver.")

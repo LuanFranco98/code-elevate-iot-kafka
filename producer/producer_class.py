@@ -17,6 +17,11 @@ class Producer():
                 api_version=(3, 8, 0),
                 value_serializer=lambda v: json.dumps(v).encode('utf-8'),
                 key_serializer=lambda k: k.encode('utf-8'),
+
+                enable_idempotence=True,
+                acks='all', 
+                retries=1,
+                max_in_flight_requests_per_connection=1,
             )
             return producer
         except Exception as e:
@@ -25,6 +30,7 @@ class Producer():
     def generate_single_sensor_data(self):
         try:
             fake_data = {
+                "ping_id": self.fake.uuid4(),
                 "sensor_id": self.fake.uuid4(),
                 "timestamp": self.fake.iso8601(),
                 "temperature": round(random.uniform(15.0, 35.0), 2),
