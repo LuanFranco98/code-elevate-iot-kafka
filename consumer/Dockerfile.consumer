@@ -5,7 +5,8 @@ FROM python:3.9
 WORKDIR /app
 
 # Copiando script
-COPY sensor_consumer.py .
+# COPY sensor_consumer.py .
+COPY . .
 
 # Instalando dependências
 RUN pip install kafka-python simplejson psycopg2 redis 

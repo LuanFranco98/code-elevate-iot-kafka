@@ -34,3 +34,17 @@ Você precisa criar um sistema de monitoramento de sensores IoT que envia dados 
 
 
 SELECT * FROM sensor_data where sensor_id='d6390e14-e96c-4201-9479-22d0d53aeedf';
+
+
+## Todo:
+
+- Criar classes pros consumers e producers
+- Colocar metodo de recuperar informacao no kafka
+- colocar visualizacao do dado no redis
+- checar formato do dado antes de salvar no consumer, formatar as string s dedata, esse tipo, conferir o tipo esse tipo de coisa
+- testes
+
+- criar arquitetura medalhao na parte 1
+- silver mudando os formatos, filtrando por dt_Refe nao nulos, ese tipo de coisa
+- gold fazendo o agrupamento
+- terminar testes
