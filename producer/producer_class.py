@@ -31,7 +31,7 @@ class Producer():
         try:
             fake_data = {
                 "ping_id": self.fake.uuid4(),
-                "sensor_id": self.fake.uuid4(),
+                "sensor_id": str(random.randint(1, 100)),
                 "timestamp": self.fake.iso8601(),
                 "temperature": round(random.uniform(15.0, 35.0), 2),
                 "humidity": round(random.uniform(30.0, 90.0), 2),

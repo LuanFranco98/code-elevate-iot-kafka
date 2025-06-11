@@ -15,7 +15,7 @@ class RedisClient:
                 port=os.environ["REDIS_PORT"],
                 db=0
             )
-            redis_client.ping()  # Test connection
+            redis_client.ping()
             print("Successfully connected to Redis.")
         except Exception as e:
             print(f"Error connecting to Redis: {e}")

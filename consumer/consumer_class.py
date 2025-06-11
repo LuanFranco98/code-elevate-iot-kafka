@@ -14,7 +14,7 @@ class Consumer():
         try:
             consumer = KafkaConsumer(
                 'iot-sensor-data',
-                api_version=(3, 8, 0), # passei uma fome por cauas dessa versao aqui
+                api_version=(3, 8, 0), 
                 bootstrap_servers='kafka:9092',
                 value_deserializer=lambda m: json.loads(m.decode('utf-8')),
                 auto_offset_reset='earliest',
@@ -37,12 +37,10 @@ class Consumer():
             print("Data processing complete for this message.")
         except Exception as e:
             print(f"Failed to process message: {msg_value}. Error: {e}")
-            # Optionally, implement a dead-letter queue or retry mechanism here
 
     def consume_messages(self):
         print("Starting message consumption...")
         for msg in self.consumer:
-            # It's good practice to ensure msg.value is a dict if it comes from JSON
             if isinstance(msg.value, bytes):
                 try:
                     parsed_value = json.loads(msg.value.decode('utf-8'))
@@ -50,7 +48,7 @@ class Consumer():
                     print(f"Could not decode message value as JSON: {msg.value}")
                     continue
             else:
-                parsed_value = msg.value # Assume it's already a dict if not bytes
+                parsed_value = msg.value 
             if self.is_valid(parsed_value):
                 self.process_message(parsed_value)
             else:
@@ -69,12 +67,13 @@ class Consumer():
 
         try:
             uuid.UUID(data["ping_id"])
-            uuid.UUID(data["sensor_id"])
         except (ValueError, TypeError):
+            return False
+        
+        if not isinstance(data["sensor_id"], str):
             return False
 
         try:
-            # Handles ISO 8601 with or without timezone Z
             datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
         except (ValueError, TypeError):
             return False
