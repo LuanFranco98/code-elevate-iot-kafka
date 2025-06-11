@@ -1,7 +1,6 @@
-# code-elevate-iot-kafka
-## Monitoramento de Sensores IoT
+# Monitoramento de Sensores IoT
 
-### Descrição do Problema
+## Problem description
 Você precisa criar um sistema de monitoramento de sensores IoT que envia dados de sensores em tempo real para um tópico Kafka (producer) e consome esses dados para processamento e armazenamento (consumer).
 
 1. **Criar o Producer**
@@ -12,50 +11,76 @@ Você precisa criar um sistema de monitoramento de sensores IoT que envia dados 
     - Desenvolver um script que consome os dados do tópico Kafka e processa esses dados.
     - Armazenar os dados consumidos em um banco de dados.
 
+## 📁 Project Structure
+```
+.
+├── docker-compose.yml
+├── db/
+│   └── init.sql
+├── producer/
+│   ├── Dockerfile.producer
+│   └── producer_class.py
+├── consumer/
+│   ├── Dockerfile.consumer
+│   ├── consumer_class.py
+|   ├── run.py
+|   └── clients/
+|       ├── postgres_client_class.py
+|       └── redis_client_class.py
+├── requirements.txt
+├── .gitignore
+└── README.md
+```
 
-## Docker: 
-- Build:
-    - $ docker compose up --build
+## 🚀 Getting Started
+1. Clone the repository:
+``` bash
+git clone https://github.com/your-username/iot-monitoring.git
+cd iot-monitoring
+```
+2. Start the project:
+``` bash
+docker-compose up --build
+```
 
-- deletar containers
-    - $ docker compose down 
+This will start:
+- Kafka + Zookeeper
+- Redis
+- PostgreSQL (with schema initialization)
+- Producer 
+- Consumer 
 
-- List runing:
-    - $ docker ps -a
+## 📊 Data Flow
+1. Producer (producer_class.py):
+    - Generates fake sensor data using Faker
+    - Sends it to Kafka topic iot-sensor-data
 
-- Show logs:
-    - $  docker logs -f " hash do CONTAINER ID
-
-- fazer consulta no bd (postgres):
-    - docker exec -it postgres psql -U iotuser iotdb 
-         - listar databases: \dt
-         - table schema: \d sensor_data
-         - SELECT * FROM sensor_data LIMIT 5;
-
-
-SELECT * FROM sensor_data where sensor_id='d6390e14-e96c-4201-9479-22d0d53aeedf';
-
-## ler isso aqui:
-https://medium.com/creditas-tech/desvendando-o-kafka-parte-3-partitions-e-replication-23b36bb88c80
-
-### 1. Preventing Data Loss and Enhancing Durability
-
-https://kafka-python.readthedocs.io/en/master/apidoc/KafkaProducer.html
-
-**enable_idempotence (bool)** – When set to **True**, the producer will ensure that exactly one copy of each message is written in the stream. If False, producer retries due to broker failures, etc., may write duplicates of the retried message in the stream. Default: False.
-Note that enabling idempotence requires **max_in_flight_requests_per_connection** to be set to 1 and **retries** cannot be zero. Additionally, **acks** must be set to ‘all’. If these values are left at their defaults, the producer will override the defaults to be suitable. If the values are set to something incompatible with the idempotent producer, a KafkaConfigurationError will be raised.
+2. Consumer (consumer_class.py):
+    - Consumes data from Kafka
+    - Stores:
+        - Latest readings in Redis
+        - Full history in PostgreSQL
 
 
-## Todo:
+## 🧪 How to Check Data
+**Redis (latest sensor values)**
 
-- Criar classes pros consumers e producers
-- Colocar metodo de recuperar informacao no kafka
-- colocar visualizacao do dado no redis
-- checar formato do dado antes de salvar no consumer, formatar as string s dedata, esse tipo, conferir o tipo esse tipo de coisa
-- testes
+```bash
+docker exec -it redis redis-cli
+> KEYS *
+> GET sensor:<sensor_id>
+```
 
-- criar arquitetura medalhao na parte 1
-- silver mudando os formatos, filtrando por dt_Refe nao nulos, ese tipo de coisa
-- gold fazendo o agrupamento
-- terminar testes
-- Converter tambem datas no formarto H:MM 
+**PostgreSQL (historical data)**
+```bash
+docker exec -it postgres psql -U iotuser iotdb 
+iotdb=# SELECT * FROM sensor_data LIMIT 5;
+```
+
+## 🛠 Environment Variables
+Defined inside docker-compose.yml for PostgreSQL, Redis and Kafka.
+
+
+## 👤 Author
+**Luan Silveira Franco**<br/>
+*Data Engineer* 
