@@ -6,11 +6,9 @@ WORKDIR /app
 
 # Copiando script
 COPY . .
-# COPY entrypoint.sh .
 
 # Instalando dependências
-RUN pip install kafka-python faker
+RUN pip install kafka-python==2.2.11 faker==37.4.0
 
 # Rodando script
-# ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["python", "run.py"]

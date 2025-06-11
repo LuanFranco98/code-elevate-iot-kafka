@@ -9,7 +9,7 @@ WORKDIR /app
 COPY . .
 
 # Instalando dependências
-RUN pip install kafka-python simplejson psycopg2 redis 
+RUN pip install kafka-python==2.2.11 simplejson==3.20.1 psycopg2==2.9.10 redis==6.2.0
 
 # Rodando script
 CMD ["python", "run.py"]
