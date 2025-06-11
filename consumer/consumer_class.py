@@ -1,6 +1,8 @@
 from clients import PostgresClient, RedisClient
 from kafka import KafkaConsumer
+from datetime import datetime
 import json
+import uuid
 
 class Consumer():
     def __init__(self):
@@ -49,6 +51,47 @@ class Consumer():
                     continue
             else:
                 parsed_value = msg.value # Assume it's already a dict if not bytes
+            if self.is_valid(parsed_value):
+                self.process_message(parsed_value)
+            else:
+                print("Message recieved is not valid")
+                raise Exception("Message recieved is not valid")
 
-            self.process_message(parsed_value)
 
+    def is_valid(self, data: dict) -> bool:
+        required_keys = {"ping_id", "sensor_id", "timestamp", "temperature", "humidity", "location"}
+
+        if not isinstance(data, dict):
+            return False
+
+        if not required_keys.issubset(data.keys()):
+            return False
+
+        try:
+            uuid.UUID(data["ping_id"])
+            uuid.UUID(data["sensor_id"])
+        except (ValueError, TypeError):
+            return False
+
+        try:
+            # Handles ISO 8601 with or without timezone Z
+            datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            return False
+
+        if not isinstance(data["temperature"], (int, float)):
+            return False
+
+        if not isinstance(data["humidity"], (int, float)):
+            return False
+
+        if not isinstance(data["location"], str):
+            return False
+
+        if not (15.0 <= data["temperature"] <= 35.0):
+            return False
+
+        if not (30.0 <= data["humidity"] <= 90.0):
+            return False
+
+        return True

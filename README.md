@@ -58,3 +58,4 @@ Note that enabling idempotence requires **max_in_flight_requests_per_connection*
 - silver mudando os formatos, filtrando por dt_Refe nao nulos, ese tipo de coisa
 - gold fazendo o agrupamento
 - terminar testes
+- Converter tambem datas no formarto H:MM 
