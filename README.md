@@ -35,8 +35,8 @@ Você precisa criar um sistema de monitoramento de sensores IoT que envia dados 
 ## 🚀 Getting Started
 1. Clone the repository:
 ``` bash
-git clone https://github.com/your-username/iot-monitoring.git
-cd iot-monitoring
+git clone https://github.com/LuanFranco98/code-elevate-iot-kafka.git
+cd code-elevate-iot-kafka
 ```
 2. Start the project:
 ``` bash
