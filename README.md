@@ -40,7 +40,7 @@ cd code-elevate-iot-kafka
 ```
 2. Start the project:
 ``` bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This will start:
